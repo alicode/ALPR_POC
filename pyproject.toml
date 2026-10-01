@@ -1,0 +1,20 @@
+[project]
+name = "alpr-poc"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+authors = [
+    { name = "alicode", email = "alicode@gmail.com" }
+]
+requires-python = ">=3.12"
+dependencies = [
+    "onnxruntime>=1.30.0",
+    "opencv-python>=5.0.0.93",
+]
+
+[project.scripts]
+alpr-poc = "alpr_poc:main"
+
+[build-system]
+requires = ["uv_build>=0.12.1,<0.13.0"]
+build-backend = "uv_build"
