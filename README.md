@@ -42,7 +42,45 @@ uv run YOLOv8_PP-ocr.py  car90.jpg
 ```
 偵測到的車牌號碼：BJX-7371（平均信心值 1.00）
 ```
+## 匯出 lp-yolov8 onnx 格式 (選項,Option)
+[YOLOv8預訓練好得模型](https://huggingface.co/Koushim/yolov8-license-plate-detection) 並沒有 [ONNX](https://onnx.ai/) 格式的模型, 以下是執行匯出ONNX 流程
+**YOLOv8_export-to_onnxruntime.py**
+```python!
+from ultralytics import YOLO
 
+# 載入 Hugging Face 上的模型權重（會自動下載 best.pt）
+model = YOLO("models/lp-yolov8n.pt")
+
+# 匯出成 ONNX 格式（適合 ONNXRuntime 執行）
+# format="onnx" 會產生 best.onnx
+# dynamic=True 可選擇性開啟，用以支援動態輸入維度
+path = model.export(format="onnx", dynamic=True)
+print(f"ONNX 模型已儲存至: {path}")
+```
+```bash!
+cd OCR/ALPR_POC
+# 過程中會下載很多相依套件,約 5GB 多
+uv add ultralytics
+uv run YOLOv8_export-to_onnxruntime.py
+```
+```
+ONNX: starting export with onnx 1.23.1 opset 18...
+ONNX: slimming with onnxslim 0.1.97...
+ONNX: export success ✅ 3.4s, saved as 'models/lp-yolov8n.onnx' (11.7 MB)
+
+Export complete (3.5s)
+Results saved to /home/andy/LAB/OCR/ALPR_POC/models/lp-yolov8n.onnx
+Predict:         yolo predict task=detect model=models/lp-yolov8n.onnx imgsz=640 
+Validate:        yolo val task=detect model=models/lp-yolov8n.onnx imgsz=640   
+Visualize:       https://netron.app
+ONNX 模型已儲存至: models/lp-yolov8n.onnx
+```
+ONNX 模型已經匯出到 models/lp-yolov8n.onnx ,就可以將5GB ultralytics 及相依套件給刪出
+```bash!
+uv remove ultralytics
+uv cache dir
+uv cache clean
+```
 ## 參考資料:
 - [Hugging Face - Koushim/yolov8-license-plate-detection](https://huggingface.co/Koushim/yolov8-license-plate-detection)
 - [ultralytics YOLOv8](https://docs.ultralytics.com/zh/models/yolov8)
